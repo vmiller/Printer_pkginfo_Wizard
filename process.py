@@ -408,7 +408,6 @@ def fnMakePkgInfo():
     then writes it out to a plist file.'''
 
     printerDisplayName = PrinterMakeModel + ', ' + PrinterLocation
-    printerDescription = PkgInfoDescription
     pkgInfoFileName = PkgInfoName + '-' + PkgInfoVersion + '.plist'
 
     installCheckScript = open('installcheck_script.sh', 'r').read()
@@ -422,7 +421,7 @@ def fnMakePkgInfo():
         autoremove = False,
         catalogs = ["testing"],
         category = "Printers",
-        description = printerDescription,
+        description = PkgInfoDescription,
         display_name = printerDisplayName,
         name = PkgInfoName,
         unattended_install = True,
