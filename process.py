@@ -401,48 +401,48 @@ def fnModifyScripts():
     cmdCleanup = ['rm', 'installcheck_script.sh', \
                   'postinstall_script.sh', 'uninstall_script.sh']
     subprocess.call(cmdCleanup) # deletes temporary script files.
-                
-def fnMakePkgInfo():
-    """Builds and executes the makepkginfo command utilizing the install scripts
-    generated in fnModifyScripts. Collects output into variable."""
     
-    pkgVers = '--pkgvers=' + PkgInfoVersion
-    printerDisplayName = '--displayname=' + PrinterMakeModel + ', ' + PrinterLocation
-    printerDescription = '--description=' + PkgInfoDescription
+    
+def fnMakePkgInfo():
+    '''Builds a dict representing the pkginfo plist and
+    then writes it out to a plist file.'''
+
+    printerDisplayName = PrinterMakeModel + ', ' + PrinterLocation
+    printerDescription = PkgInfoDescription
     pkgInfoFileName = PkgInfoName + '-' + PkgInfoVersion + '.plist'
 
-    makePkgInfoCMD = ['/usr/local/munki/makepkginfo', '--unattended_install', \
-                      '--uninstall_method=uninstall_script', \
-                      '--name=' + PkgInfoName, printerDisplayName, printerDescription, \
-                      '--nopkg', '--installcheck_script=installcheck_script.sh', \
-                      '--postinstall_script=postinstall_script.sh', \
-                      '--uninstall_script=uninstall_script.sh', \
-                      '--minimum_os_version=10.6.8', pkgVers, \
-                      "--category=Printers"]
-    # Only add the 'requires' key if PrinterDriver has a value
+    installCheckScript = open('installcheck_script.sh', 'r').read()
+    postInstallScript = open('postinstall_script.sh', 'r').read()
+    uninstallScript = open('uninstall_script.sh', 'r').read()
+
+    pkginfoDict = dict(
+        _metadata = dict(
+            created_by = "millerva"
+        ),
+        autoremove = False,
+        catalogs = ["testing"],
+        category = "Printers",
+        description = printerDescription,
+        display_name = printerDisplayName,
+        name = PkgInfoName,
+        unattended_install = True,
+        uninstall_method = "uninstall_script",
+        installer_type = "nopkg",
+        minimum_os_version = "10.6.8",
+        uninstallable = True,
+        version = PkgInfoVersion,
+        installcheck_script = installCheckScript,
+        postinstall_script = postInstallScript,
+        uninstall_script = uninstallScript
+    )
+    # Add the 'requires' key only if the option was chosen
     if PrinterDriver != '':
-        makePkgInfoCMD.append('-r')
-        makePkgInfoCMD.append(PrinterDriver)        
-        
-    pkginfoOutput = subprocess.Popen(makePkgInfoCMD, \
-                                     stdout=subprocess.PIPE, \
-                                     stderr=subprocess.PIPE)
-    (pkginfoResult, errorBucket) = pkginfoOutput.communicate()
+        pkginfoDict['requires'] = [PrinterDriver]
     
-    with open(pkgInfoFileName, "wt") as pkgout: #writes variable output to file.
-        for line in pkginfoResult:
-            pkgout.write(line)
-            
-    ### Now we add the uninstallable key
-    
-#    printerpkginfo = PkgInfoName + ".plist"    
-    
-    plistInput = plistlib.readPlist(pkgInfoFileName)
-    plistInput["uninstallable"] = True
-    plistlib.writePlist(plistInput, pkgInfoFileName)
-    
+    plistlib.writePlist(pkginfoDict, pkgInfoFileName)
     print "PkgInfo printer deployment file has been created as " + pkgInfoFileName
- 
+        
+                     
 ###
 #  Kick the whole damn thing off
 ###    
