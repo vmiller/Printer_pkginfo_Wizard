@@ -23,6 +23,7 @@ os.chdir(dirname)
 ## The dictionary is configured as 'Human readable':'munki pkgname'
 
 driverCollection = {'Hewlett Packard':'HewlettPackardPrinterDrivers',\
+                    'RICOH':'RicohPrinterDrivers'}  
                     'Xerox':'XeroxPrinterDrivers',\
                     'Canon':'CanonPrinterDrivers'}  
 
