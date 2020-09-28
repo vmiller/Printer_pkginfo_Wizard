@@ -26,7 +26,8 @@ driverCollection = {'Hewlett Packard':'HewlettPackardPrinterDrivers',\
                     'Canon - Commercial Copiers':'Canon_UFR_II_Installer',\
                     'Canon - Consumer Printers':'CanonPrinterDrivers',\
                     'Lexmark':'LexmarkPrinterDrivers',\
-                    'Epson':'EPSONPrinterDrivers'}  
+                    'Epson':'EPSONPrinterDrivers',\
+                    'RICOH':'RicohPrinterDrivers'}  
 
 ## Enter an example of your house naming convention
 
