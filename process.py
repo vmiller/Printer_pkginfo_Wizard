@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/managed_python3
 
 """
 CLI Application to streamline the creation of PKGInfo files 
@@ -46,42 +46,42 @@ def fnPrintCurrentState():
     discovered and selected values."""
     
     os.system('clear')
-    print "=============================\n"
-    print "Selected Printer     :", Printer
+    print("=============================\n")
+    print("Selected Printer     :", Printer)
     
     if (DeviceURI):
-        print "Printer URI          :", DeviceURI
-        print "Printer Display Name :", PrinterDisplayName
-        print "Printer Make & Model :", PrinterMakeModel
-        print "Printer Location     :", PrinterLocation
+        print("Printer URI          :", DeviceURI)
+        print("Printer Display Name :", PrinterDisplayName)
+        print("Printer Make & Model :", PrinterMakeModel)
+        print("Printer Location     :", PrinterLocation)
         
     if (DeviceURI[:6] == "smb://"):
-        print "\nPrinter Connection   : Active Directory Queue"
-        print "Print Server         :", PrintServer
-        print "Printer Queue        :", PrinterQueue
+        print("\nPrinter Connection   : Active Directory Queue")
+        print("Print Server         :", PrintServer)
+        print("Printer Queue        :", PrinterQueue)
     else:
-        print "\nPrinter Connection   : Direct"
+        print("\nPrinter Connection   : Direct")
     
     if (SelectedPPD):
-        print "\nPPD Selected         :", SelectedPPD
+        print("\nPPD Selected         :", SelectedPPD)
         
     if (PrinterDriver):
-        print "Selected Drivers     :", PrinterDriver
+        print("Selected Drivers     :", PrinterDriver)
             
     if (OptionList):
         x = False
-        print "\nSelected Options     :",
+        print("\nSelected Options     :",)
         
         for eachoption in OptionList:
             if (x):
-                print "                     :", eachoption
+                print("                     :", eachoption)
             else:
-                print eachoption
+                print(eachoption)
                 x = True
     if (PkgInfoName):
-        print "\nDeployment Name      :", PkgInfoName
-        print "Deployment Version   :", PkgInfoVersion            
-    print "\n=============================\n"
+        print("\nDeployment Name      :", PkgInfoName)
+        print("Deployment Version   :", PkgInfoVersion)            
+    print("\n=============================\n")
 
 def fnGetConfiguredPrinter():
     """lists currently installed and configured printers on the system
@@ -107,10 +107,10 @@ def fnChooseConfiguredPrinter(printers):
     
     os.system("clear")
     
-    print "\tPlease select the printer you wish to deploy.\n"
+    print("\tPlease select the printer you wish to deploy.\n")
     
     for prnIndex, printer in enumerate(printers):
-        print '\t[', prnIndex+1, ']', printer   #enumerate starting with 1   
+        print('\t[', prnIndex+1, ']', printer)   #enumerate starting with 1   
     
     printerSelection = (int(raw_input('\n\n\tChoice: '))-1)  #subtract 1 from response
     
@@ -123,7 +123,7 @@ def fnPrnSelVerify(selectedPrinter):
     """verify correct printer selection prior to continuing, and 
     give user option to reselect. """
     
-    print '\n\tYou selected: ', selectedPrinter, "\n\n"
+    print('\n\tYou selected: ', selectedPrinter, "\n\n")
     
     x = raw_input("\tIs this correct? [y or n]: ")
        
@@ -134,7 +134,7 @@ def fnPrnSelVerify(selectedPrinter):
         Printer = selectedPrinter
     else:
         os.system('clear')
-        print "I'm sorry, I didn't understand that."
+        print("I'm sorry, I didn't understand that.")
         fnPrnSelVerify(selectedPrinter)
 
 def fnGetDeviceInformation(SelPrinter):
@@ -145,7 +145,7 @@ def fnGetDeviceInformation(SelPrinter):
     (options, errorbucket) = processGetURI.communicate()
     optionsRawList = shlex.split(options)
     
-    print optionsRawList
+    print(optionsRawList)
     
     OptionsList = {}
     
@@ -178,10 +178,10 @@ def fnChoosePPD():
     /Library/Printers/PPDs/Contents/Resources for PPD selection."""
     
     fnPrintCurrentState()
-    print "What PPD would you like to use with this printer?\n"
-    print "Enter a search term for the PPD. Usually, a model number works well when "
-    print "attempting to select a PPD, so if you have an HP M401dne, try 'M401', or  "
-    print "for a Canon ImageRunner Advance 6075 copier, try simply '6075'."
+    print("What PPD would you like to use with this printer?\n")
+    print("Enter a search term for the PPD. Usually, a model number works well when ")
+    print("attempting to select a PPD, so if you have an HP M401dne, try 'M401', or  ")
+    print("for a Canon ImageRunner Advance 6075 copier, try simply '6075'.")
     
     ppdSearchTerm = raw_input('Search Term: ')
     
@@ -209,29 +209,29 @@ def fnChoosePPD():
     fnPrintCurrentState()
     
     if (len(foundPPDs) < 1):
-        print "I'm sorry - I couldn't find anything."
-        print "Do you have the drivers installed on this system?"
+        print("I'm sorry - I couldn't find anything.")
+        print("Do you have the drivers installed on this system?")
         junk = raw_input("Press [Enter] to retry.")
         fnChoosePPD()
     else:  
-        print "I found the following PPDs that might work - enter the number"
-        print "of the one you would like to use, or '9999' to search again."  
+        print("I found the following PPDs that might work - enter the number")
+        print("of the one you would like to use, or '9999' to search again.")  
         for ppdIndex, ppdSuggest in enumerate(foundPPDs):
-            print "[",ppdIndex+1,"] -", ppdSuggest
-        print "[ 9999 ] - Search Again\n"
-        print "# of found PPDs:", len(foundPPDs)
+            print("[",ppdIndex+1,"] -", ppdSuggest)
+        print("[ 9999 ] - Search Again\n")
+        print("# of found PPDs:", len(foundPPDs))
         
         ppdSelectIndex = (int(raw_input('Selection: '))-1)
         
         if ppdSelectIndex == "9998":
-            print "OK - restarting search"
+            print("OK - restarting search")
             fnChoosePPD()
         elif (ppdSelectIndex >= 0) & (ppdSelectIndex < int(len(foundPPDs))):
             global SelectedPPD
             SelectedPPD = foundPPDs[int(ppdSelectIndex)]
-            print "You selected ", SelectedPPD
+            print("You selected ", SelectedPPD)
         else:
-            print "!!! ERROR, Will Robinson - I don't have that in my list !!!\n\n"
+            print("!!! ERROR, Will Robinson - I don't have that in my list !!!\n\n")
             fnChoosePPD()
 
 def fnSetPackageDependancy(driverCollection):
@@ -239,9 +239,9 @@ def fnSetPackageDependancy(driverCollection):
     is populated in script configuration above. Will set user selection
     as a dependant installation in the pkginfo file."""
     
-    print "These are the driver sets available in the Munki repository."
-    print "Please select which set is required by this printer, or if"
-    print "you will install the drivers by hand.\n"
+    print("These are the driver sets available in the Munki repository.")
+    print("Please select which set is required by this printer, or if")
+    print("you will install the drivers by hand.\n")
     
     printerStyles = []
     driverSets = []
@@ -251,9 +251,9 @@ def fnSetPackageDependancy(driverCollection):
         driverSets.append(v)
     
     for dI, dV in enumerate(printerStyles):
-        print '[',dI+1,'] -', dV
+        print('[',dI+1,'] -', dV)
     
-    print "[9999] - No Dependency, will install by hand."
+    print("[9999] - No Dependency, will install by hand.")
     
     driverSelect = (int(raw_input('Selection: '))-1)
     
@@ -264,7 +264,7 @@ def fnSetPackageDependancy(driverCollection):
     elif ((driverSelect >= 0) & (driverSelect < len(driverSets))):
         PrinterDriver = driverSets[driverSelect]
     else:
-        print "I'm sorry, I didn't understand that input. Please try again"
+        print("I'm sorry, I didn't understand that input. Please try again")
         fnSetPackageDependancy()
         
 def fnSetPrinterOptions():
@@ -299,7 +299,7 @@ def fnSetPrinterOptions():
         printerOptions.append(key + "=" + stuff[1:])
         
     for number, option in enumerate(printerOptions):
-        print "[", number+1, "] ", option
+        print("[", number+1, "] ", option)
         
     optionSelect = str(raw_input('Please enter the options you would like to include, separated by commas. : '))
     
@@ -320,8 +320,8 @@ def fnVerifySelections(retry):
     and if not, restart the process"""
     
     if (retry):
-        print "\tI'm sorry, I didn't understand that response.\
-        \n\tPlease enter 'y' or 'n'."
+        print("\tI'm sorry, I didn't understand that response.\
+        \n\tPlease enter 'y' or 'n'.")
     
     verified = str(raw_input('\tAre these settings correct? [y/n]: '))
     
@@ -443,7 +443,7 @@ def fnMakePkgInfo():
     plistInput["uninstallable"] = True
     plistlib.writePlist(plistInput, pkgInfoFileName)
     
-    print "PkgInfo printer deployment file has been created as " + pkgInfoFileName
+    print("PkgInfo printer deployment file has been created as " + pkgInfoFileName)
  
 ###
 #  Kick the whole damn thing off
