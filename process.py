@@ -23,15 +23,13 @@ os.chdir(dirname)
 ## The dictionary is configured as 'Human readable':'munki pkgname'
 
 driverCollection = {'Hewlett Packard':'HewlettPackardPrinterDrivers',\
-                    'Canon - Commercial Copiers':'Canon_UFR_II_Installer',\
-                    'Canon - Consumer Printers':'CanonPrinterDrivers',\
-                    'Lexmark':'LexmarkPrinterDrivers',\
-                    'Epson':'EPSONPrinterDrivers',\
                     'RICOH':'RicohPrinterDrivers'}  
+                    'Xerox':'XeroxPrinterDrivers',\
+                    'Canon':'CanonPrinterDrivers'}  
 
 ## Enter an example of your house naming convention
 
-nameExample = "printer-as-psy-hp-m551-430hh-prq03"
+nameExample = "p1-loc.build.lafayette"
 
 ## defining variables so fnPrintCurrentState doesn't bark at me
 ## before they are populated.
