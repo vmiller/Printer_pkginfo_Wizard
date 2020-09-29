@@ -178,12 +178,9 @@ def fnChoosePPD():
     
     if (len(ppdSearchTerm) < 1):
         fnChoosePPD()
-    
-    cmdPPDSearch = ['/usr/sbin/lpinfo', '-m']
-    processPPDSearch = subprocess.Popen(cmdPPDSearch, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (ppdListRaw, errorbucket) = processPPDSearch.communicate()
-    
-    ppdListRaw = ppdListRaw.split('\n')
+
+    ppdListRaw = subprocess.run(['/usr/sbin/lpinfo', '-m'], stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+    print(ppdListRaw)
     ppdList = []
     for ppd in ppdListRaw:
         if ppd.startswith('drv'):
