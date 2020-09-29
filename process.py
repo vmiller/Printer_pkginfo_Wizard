@@ -94,7 +94,7 @@ def fnGetConfiguredPrinter():
     listPrinters = subprocess.Popen(listPrintersCMD, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (printersList, errorBucket) = listPrinters.communicate()
     
-    for printerLine in printersList.split('\n'):
+    for printerLine in str(printersList).split('\n'):
         if printerLine.count(' ') > 1:
             printerElements = printerLine.split()
             if printerElements[0] == 'printer':
