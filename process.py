@@ -136,20 +136,13 @@ def fnPrnSelVerify(selectedPrinter):
         fnPrnSelVerify(selectedPrinter)
 
 def fnGetDeviceInformation(SelPrinter):
-    cmdGetURI = ['/usr/bin/lpoptions', '-p', SelPrinter]
-    processGetURI = subprocess.Popen(cmdGetURI, \
-                                     stdout=subprocess.PIPE, \
-                                     stderr=subprocess.PIPE)
-    (options, errorbucket) = processGetURI.communicate()
-    optionsRawList = shlex.split(options)
-    
-    print(optionsRawList)
+    optionsRawList = subprocess.run(['/usr/bin/lpoptions', '-p', SelPrinter], stdout=subprocess.PIPE).stdout.decode('utf-8').split()
     
     OptionsList = {}
     
     for ov in optionsRawList:
         if "=" in ov:
-            ovDictLoad = string.split(ov, "=")
+            ovDictLoad = ov.split("=")
             OptionsList[ovDictLoad[0]] = str(ovDictLoad[1])
     
     global DeviceURI 
