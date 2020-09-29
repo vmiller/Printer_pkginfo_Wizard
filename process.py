@@ -112,7 +112,7 @@ def fnChooseConfiguredPrinter(printers):
     for prnIndex, printer in enumerate(printers):
         print('\t[', prnIndex+1, ']', printer)   #enumerate starting with 1   
     
-    printerSelection = (int(raw_input('\n\n\tChoice: '))-1)  #subtract 1 from response
+    printerSelection = (int(input('\n\n\tChoice: '))-1)  #subtract 1 from response
     
     ### check input here - TBD ###
     
@@ -125,7 +125,7 @@ def fnPrnSelVerify(selectedPrinter):
     
     print('\n\tYou selected: ', selectedPrinter, "\n\n")
     
-    x = raw_input("\tIs this correct? [y or n]: ")
+    x = input("\tIs this correct? [y or n]: ")
        
     if str(x) is "n":
         fnChooseConfiguredPrinter(printers)
@@ -183,7 +183,7 @@ def fnChoosePPD():
     print("attempting to select a PPD, so if you have an HP M401dne, try 'M401', or  ")
     print("for a Canon ImageRunner Advance 6075 copier, try simply '6075'.")
     
-    ppdSearchTerm = raw_input('Search Term: ')
+    ppdSearchTerm = input('Search Term: ')
     
     if (len(ppdSearchTerm) < 1):
         fnChoosePPD()
@@ -211,7 +211,7 @@ def fnChoosePPD():
     if (len(foundPPDs) < 1):
         print("I'm sorry - I couldn't find anything.")
         print("Do you have the drivers installed on this system?")
-        junk = raw_input("Press [Enter] to retry.")
+        junk = input("Press [Enter] to retry.")
         fnChoosePPD()
     else:  
         print("I found the following PPDs that might work - enter the number")
@@ -221,7 +221,7 @@ def fnChoosePPD():
         print("[ 9999 ] - Search Again\n")
         print("# of found PPDs:", len(foundPPDs))
         
-        ppdSelectIndex = (int(raw_input('Selection: '))-1)
+        ppdSelectIndex = (int(input('Selection: '))-1)
         
         if ppdSelectIndex == "9998":
             print("OK - restarting search")
@@ -255,7 +255,7 @@ def fnSetPackageDependancy(driverCollection):
     
     print("[9999] - No Dependency, will install by hand.")
     
-    driverSelect = (int(raw_input('Selection: '))-1)
+    driverSelect = (int(input('Selection: '))-1)
     
     global PrinterDriver
     
@@ -301,7 +301,7 @@ def fnSetPrinterOptions():
     for number, option in enumerate(printerOptions):
         print("[", number+1, "] ", option)
         
-    optionSelect = str(raw_input('Please enter the options you would like to include, separated by commas. : '))
+    optionSelect = str(input('Please enter the options you would like to include, separated by commas. : '))
     
     if (len(optionSelect) > 0):
         for s in string.split(optionSelect, ','):
@@ -323,17 +323,17 @@ def fnVerifySelections(retry):
         print("\tI'm sorry, I didn't understand that response.\
         \n\tPlease enter 'y' or 'n'.")
     
-    verified = str(raw_input('\tAre these settings correct? [y/n]: '))
+    verified = str(input('\tAre these settings correct? [y/n]: '))
     
     if verified == 'y':  #start prompting for printer name, version and description
         fnPrintCurrentState()
         global PkgInfoName
         global PkgInfoDescription
         global PkgInfoVersion
-        PkgInfoName = str(raw_input('\tPlease enter the deployment name.\
+        PkgInfoName = str(input('\tPlease enter the deployment name.\
         \n\tExample: ' + nameExample + '\n\t>>> '))
-        PkgInfoDescription = str(raw_input('\n\tPlease enter a printer description.\n\t>>> '))
-        PkgInfoVersion = str(raw_input('\n\tPlease enter the deployment version: '))
+        PkgInfoDescription = str(input('\n\tPlease enter a printer description.\n\t>>> '))
+        PkgInfoVersion = str(input('\n\tPlease enter the deployment version: '))
     elif verified == 'n':
         printerSelection = fnGetConfiguredPrinter()
     else:
