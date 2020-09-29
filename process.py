@@ -89,12 +89,10 @@ def fnGetConfiguredPrinter():
     
     if (len(printers) > 0):
         del printers [:]
-        
-    listPrintersCMD = ['/usr/bin/lpstat', '-p']    
-    listPrinters = subprocess.Popen(listPrintersCMD, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (printersList, errorBucket) = listPrinters.communicate()
-    
-    for printerLine in str(printersList).split('\n'):
+
+    printersList = subprocess.run(['/usr/bin/lpstat', '-p'], stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()        
+
+    for printerLine in printersList:
         if printerLine.count(' ') > 1:
             printerElements = printerLine.split()
             if printerElements[0] == 'printer':
@@ -106,7 +104,7 @@ def fnChooseConfiguredPrinter(printers):
     """ creates enumerated list of printers for user to select for deployment."""
     
     #os.system('clear')
-    
+
     print("\tPlease select the printer you wish to deploy.\n")
     
     for prnIndex, printer in enumerate(printers):
