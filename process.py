@@ -45,7 +45,7 @@ def fnPrintCurrentState():
     """prints current state of script to user - showing
     discovered and selected values."""
     
-    os.system('clear')
+    #os.system('clear')
     print("=============================\n")
     print("Selected Printer     :", Printer)
     
@@ -105,7 +105,7 @@ def fnGetConfiguredPrinter():
 def fnChooseConfiguredPrinter(printers):
     """ creates enumerated list of printers for user to select for deployment."""
     
-    os.system("clear")
+    #os.system('clear')
     
     print("\tPlease select the printer you wish to deploy.\n")
     
@@ -116,7 +116,7 @@ def fnChooseConfiguredPrinter(printers):
     
     ### check input here - TBD ###
     
-    os.system("clear")
+    #os.system('clear')
     fnPrnSelVerify(printers[int(printerSelection)])
    
 def fnPrnSelVerify(selectedPrinter):
@@ -127,13 +127,13 @@ def fnPrnSelVerify(selectedPrinter):
     
     x = input("\tIs this correct? [y or n]: ")
        
-    if str(x) is "n":
+    if str(x) == "n":
         fnChooseConfiguredPrinter(printers)
-    elif str(x) is "y":
+    elif str(x) == "y":
         global Printer
         Printer = selectedPrinter
     else:
-        os.system('clear')
+        #os.system('clear')
         print("I'm sorry, I didn't understand that.")
         fnPrnSelVerify(selectedPrinter)
 
