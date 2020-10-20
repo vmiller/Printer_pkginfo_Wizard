@@ -260,10 +260,8 @@ def fnSetPrinterOptions():
     comma separated values."""
     
     cmdGetOpts = ['lpoptions', '-p', Printer, '-l']
-    processGetOpts = subprocess.Popen(cmdGetOpts, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (resultGetOpts, errorbucket) = processGetOpts.communicate()
-    
-    resultLinesGetOpts = string.split(resultGetOpts, '\n')
+    resultGetOpts = subprocess.run(cmdGetOpts, stdout=subprocess.PIPE).stdout.decode('utf-8')    
+    resultLinesGetOpts = resultGetOpts.splitlines()
     
     global OptionList
     OptionList = []
@@ -272,17 +270,19 @@ def fnSetPrinterOptions():
 
     for option in resultLinesGetOpts:
         if len(option) > 3:
-            optionSet = string.split(option, ':')
+            optionSet = option.split(':')
             tempKey = optionSet[0]
-            tOK = string.split(tempKey, "/")
+            tOK = tempKey.split("/")
             oK = tOK[0]
             query = re.compile('\*\w+')
             optResult = query.findall(optionSet[1])
             oV = optResult[0]
             printerOptionsDict[oK] = oV    
 
-    for key, stuff in printerOptionsDict.iteritems():
-        printerOptions.append(key + "=" + stuff[1:])
+    print(printerOptionsDict)
+    for printerOption in printerOptionsDict:
+        print(printerOption + ' : ', printerOptionsDict[printerOption])
+        printerOptions.append(printerOption + "=" + printerOptionsDict[printerOption])
         
     for number, option in enumerate(printerOptions):
         print("[", number+1, "] ", option)
@@ -290,7 +290,7 @@ def fnSetPrinterOptions():
     optionSelect = str(input('Please enter the options you would like to include, separated by commas. : '))
     
     if (len(optionSelect) > 0):
-        for s in string.split(optionSelect, ','):
+        for s in optionSelect.split(','):
             selection = int(s)-1
             OptionList.append(printerOptions[selection])
         
