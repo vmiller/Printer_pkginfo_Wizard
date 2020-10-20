@@ -9,6 +9,8 @@ and Nick McSpadden, 2013
 
 Setup
 =
+Install Python3 from https://github.com/macadmins/python
+
 download via:
 
 	$ git clone https://github.com/binkleybloom/Printer_pkginfo_Wizard
