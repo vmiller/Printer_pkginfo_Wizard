@@ -420,8 +420,6 @@ def fnMakePkgInfo():
             
     ### Now we add the uninstallable key
     
-#    printerpkginfo = PkgInfoName + ".plist"    
-    
     with open(pkgInfoFileName, 'rb') as fp:
         plistInput = plistlib.load(fp)
 
