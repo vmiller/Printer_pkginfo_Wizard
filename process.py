@@ -422,9 +422,13 @@ def fnMakePkgInfo():
     
 #    printerpkginfo = PkgInfoName + ".plist"    
     
-    plistInput = plistlib.readPlist(pkgInfoFileName)
+    with open(pkgInfoFileName, 'rb') as fp:
+        plistInput = plistlib.load(fp)
+
     plistInput["uninstallable"] = True
-    plistlib.writePlist(plistInput, pkgInfoFileName)
+ 
+    with open(pkgInfoFileName, 'wb') as fp:
+        plistlib.dump(plistInput, fp)
     
     print("PkgInfo printer deployment file has been created as " + pkgInfoFileName)
  
