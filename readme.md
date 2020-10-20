@@ -13,7 +13,7 @@ Install Python3 from https://github.com/macadmins/python
 
 download via:
 
-	$ git clone https://github.com/binkleybloom/Printer_pkginfo_Wizard
+	$ git clone https://github.com/vmiller/Printer_pkginfo_Wizard
 
 There are two required components:
 <ul>
