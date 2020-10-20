@@ -412,11 +412,8 @@ def fnMakePkgInfo():
         makePkgInfoCMD.append('-r')
         makePkgInfoCMD.append(PrinterDriver)        
         
-    pkginfoOutput = subprocess.Popen(makePkgInfoCMD, \
-                                     stdout=subprocess.PIPE, \
-                                     stderr=subprocess.PIPE)
-    (pkginfoResult, errorBucket) = pkginfoOutput.communicate()
-    
+    pkginfoResult = subprocess.run(makePkgInfoCMD, stdout=subprocess.PIPE).stdout.decode('utf-8')
+
     with open(pkgInfoFileName, "wt") as pkgout: #writes variable output to file.
         for line in pkginfoResult:
             pkgout.write(line)
