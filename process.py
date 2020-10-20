@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/managed_python3
 
 """
 CLI Application to streamline the creation of PKGInfo files 
@@ -45,43 +45,43 @@ def fnPrintCurrentState():
     """prints current state of script to user - showing
     discovered and selected values."""
     
-    os.system('clear')
-    print "=============================\n"
-    print "Selected Printer     :", Printer
+    #os.system('clear')
+    print("=============================\n")
+    print("Selected Printer     :", Printer)
     
     if (DeviceURI):
-        print "Printer URI          :", DeviceURI
-        print "Printer Display Name :", PrinterDisplayName
-        print "Printer Make & Model :", PrinterMakeModel
-        print "Printer Location     :", PrinterLocation
+        print("Printer URI          :", DeviceURI)
+        print("Printer Display Name :", PrinterDisplayName)
+        print("Printer Make & Model :", PrinterMakeModel)
+        print("Printer Location     :", PrinterLocation)
         
     if (DeviceURI[:6] == "smb://"):
-        print "\nPrinter Connection   : Active Directory Queue"
-        print "Print Server         :", PrintServer
-        print "Printer Queue        :", PrinterQueue
+        print("\nPrinter Connection   : Active Directory Queue")
+        print("Print Server         :", PrintServer)
+        print("Printer Queue        :", PrinterQueue)
     else:
-        print "\nPrinter Connection   : Direct"
+        print("\nPrinter Connection   : Direct")
     
     if (SelectedPPD):
-        print "\nPPD Selected         :", SelectedPPD
+        print("\nPPD Selected         :", SelectedPPD)
         
     if (PrinterDriver):
-        print "Selected Drivers     :", PrinterDriver
+        print("Selected Drivers     :", PrinterDriver)
             
     if (OptionList):
         x = False
-        print "\nSelected Options     :",
+        print("\nSelected Options     :",)
         
         for eachoption in OptionList:
             if (x):
-                print "                     :", eachoption
+                print("                     :", eachoption)
             else:
-                print eachoption
+                print(eachoption)
                 x = True
     if (PkgInfoName):
-        print "\nDeployment Name      :", PkgInfoName
-        print "Deployment Version   :", PkgInfoVersion            
-    print "\n=============================\n"
+        print("\nDeployment Name      :", PkgInfoName)
+        print("Deployment Version   :", PkgInfoVersion)            
+    print("\n=============================\n")
 
 def fnGetConfiguredPrinter():
     """lists currently installed and configured printers on the system
@@ -89,12 +89,10 @@ def fnGetConfiguredPrinter():
     
     if (len(printers) > 0):
         del printers [:]
-        
-    listPrintersCMD = ['/usr/bin/lpstat', '-p']    
-    listPrinters = subprocess.Popen(listPrintersCMD, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (printersList, errorBucket) = listPrinters.communicate()
-    
-    for printerLine in printersList.split('\n'):
+
+    printersList = subprocess.run(['/usr/bin/lpstat', '-p'], stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()        
+
+    for printerLine in printersList:
         if printerLine.count(' ') > 1:
             printerElements = printerLine.split()
             if printerElements[0] == 'printer':
@@ -105,53 +103,46 @@ def fnGetConfiguredPrinter():
 def fnChooseConfiguredPrinter(printers):
     """ creates enumerated list of printers for user to select for deployment."""
     
-    os.system("clear")
-    
-    print "\tPlease select the printer you wish to deploy.\n"
+    #os.system('clear')
+
+    print("\tPlease select the printer you wish to deploy.\n")
     
     for prnIndex, printer in enumerate(printers):
-        print '\t[', prnIndex+1, ']', printer   #enumerate starting with 1   
+        print('\t[', prnIndex+1, ']', printer)   #enumerate starting with 1   
     
-    printerSelection = (int(raw_input('\n\n\tChoice: '))-1)  #subtract 1 from response
+    printerSelection = (int(input('\n\n\tChoice: '))-1)  #subtract 1 from response
     
     ### check input here - TBD ###
     
-    os.system("clear")
+    #os.system('clear')
     fnPrnSelVerify(printers[int(printerSelection)])
    
 def fnPrnSelVerify(selectedPrinter):
     """verify correct printer selection prior to continuing, and 
     give user option to reselect. """
     
-    print '\n\tYou selected: ', selectedPrinter, "\n\n"
+    print('\n\tYou selected: ', selectedPrinter, "\n\n")
     
-    x = raw_input("\tIs this correct? [y or n]: ")
+    x = input("\tIs this correct? [y or n]: ")
        
-    if str(x) is "n":
+    if str(x) == "n":
         fnChooseConfiguredPrinter(printers)
-    elif str(x) is "y":
+    elif str(x) == "y":
         global Printer
         Printer = selectedPrinter
     else:
-        os.system('clear')
-        print "I'm sorry, I didn't understand that."
+        #os.system('clear')
+        print("I'm sorry, I didn't understand that.")
         fnPrnSelVerify(selectedPrinter)
 
 def fnGetDeviceInformation(SelPrinter):
-    cmdGetURI = ['/usr/bin/lpoptions', '-p', SelPrinter]
-    processGetURI = subprocess.Popen(cmdGetURI, \
-                                     stdout=subprocess.PIPE, \
-                                     stderr=subprocess.PIPE)
-    (options, errorbucket) = processGetURI.communicate()
-    optionsRawList = shlex.split(options)
-    
-    print optionsRawList
+    optionsRawList = subprocess.run(['/usr/bin/lpoptions', '-p', SelPrinter], stdout=subprocess.PIPE).stdout.decode('utf-8').split()
     
     OptionsList = {}
     
     for ov in optionsRawList:
         if "=" in ov:
-            ovDictLoad = string.split(ov, "=")
+            ovDictLoad = ov.split("=")
             OptionsList[ovDictLoad[0]] = str(ovDictLoad[1])
     
     global DeviceURI 
@@ -178,21 +169,18 @@ def fnChoosePPD():
     /Library/Printers/PPDs/Contents/Resources for PPD selection."""
     
     fnPrintCurrentState()
-    print "What PPD would you like to use with this printer?\n"
-    print "Enter a search term for the PPD. Usually, a model number works well when "
-    print "attempting to select a PPD, so if you have an HP M401dne, try 'M401', or  "
-    print "for a Canon ImageRunner Advance 6075 copier, try simply '6075'."
+    print("What PPD would you like to use with this printer?\n")
+    print("Enter a search term for the PPD. Usually, a model number works well when ")
+    print("attempting to select a PPD, so if you have an HP M401dne, try 'M401', or  ")
+    print("for a Canon ImageRunner Advance 6075 copier, try simply '6075'.")
     
-    ppdSearchTerm = raw_input('Search Term: ')
+    ppdSearchTerm = input('Search Term: ')
     
     if (len(ppdSearchTerm) < 1):
         fnChoosePPD()
-    
-    cmdPPDSearch = ['/usr/sbin/lpinfo', '-m']
-    processPPDSearch = subprocess.Popen(cmdPPDSearch, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (ppdListRaw, errorbucket) = processPPDSearch.communicate()
-    
-    ppdListRaw = ppdListRaw.split('\n')
+
+    ppdListRaw = subprocess.run(['/usr/sbin/lpinfo', '-m'], stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+    print(ppdListRaw)
     ppdList = []
     for ppd in ppdListRaw:
         if ppd.startswith('drv'):
@@ -209,29 +197,29 @@ def fnChoosePPD():
     fnPrintCurrentState()
     
     if (len(foundPPDs) < 1):
-        print "I'm sorry - I couldn't find anything."
-        print "Do you have the drivers installed on this system?"
-        junk = raw_input("Press [Enter] to retry.")
+        print("I'm sorry - I couldn't find anything.")
+        print("Do you have the drivers installed on this system?")
+        junk = input("Press [Enter] to retry.")
         fnChoosePPD()
     else:  
-        print "I found the following PPDs that might work - enter the number"
-        print "of the one you would like to use, or '9999' to search again."  
+        print("I found the following PPDs that might work - enter the number")
+        print("of the one you would like to use, or '9999' to search again.")  
         for ppdIndex, ppdSuggest in enumerate(foundPPDs):
-            print "[",ppdIndex+1,"] -", ppdSuggest
-        print "[ 9999 ] - Search Again\n"
-        print "# of found PPDs:", len(foundPPDs)
+            print("[",ppdIndex+1,"] -", ppdSuggest)
+        print("[ 9999 ] - Search Again\n")
+        print("# of found PPDs:", len(foundPPDs))
         
-        ppdSelectIndex = (int(raw_input('Selection: '))-1)
+        ppdSelectIndex = (int(input('Selection: '))-1)
         
         if ppdSelectIndex == "9998":
-            print "OK - restarting search"
+            print("OK - restarting search")
             fnChoosePPD()
         elif (ppdSelectIndex >= 0) & (ppdSelectIndex < int(len(foundPPDs))):
             global SelectedPPD
             SelectedPPD = foundPPDs[int(ppdSelectIndex)]
-            print "You selected ", SelectedPPD
+            print("You selected ", SelectedPPD)
         else:
-            print "!!! ERROR, Will Robinson - I don't have that in my list !!!\n\n"
+            print("!!! ERROR, Will Robinson - I don't have that in my list !!!\n\n")
             fnChoosePPD()
 
 def fnSetPackageDependancy(driverCollection):
@@ -239,23 +227,21 @@ def fnSetPackageDependancy(driverCollection):
     is populated in script configuration above. Will set user selection
     as a dependant installation in the pkginfo file."""
     
-    print "These are the driver sets available in the Munki repository."
-    print "Please select which set is required by this printer, or if"
-    print "you will install the drivers by hand.\n"
+    print("These are the driver sets available in the Munki repository.")
+    print("Please select which set is required by this printer, or if")
+    print("you will install the drivers by hand.\n")
     
     printerStyles = []
     driverSets = []
     
-    for k, v in sorted(driverCollection.iteritems()):
-        printerStyles.append(k)
-        driverSets.append(v)
+    printerStyles = sorted(driverCollection)
     
-    for dI, dV in enumerate(printerStyles):
-        print '[',dI+1,'] -', dV
+    for listIndex, printerStyle in enumerate(printerStyles):
+        driverSets.append(driverCollection[printerStyle])
+        print('[',listIndex+1,'] -', printerStyle)
+    print("[9999] - No Dependency, will install by hand.")
     
-    print "[9999] - No Dependency, will install by hand."
-    
-    driverSelect = (int(raw_input('Selection: '))-1)
+    driverSelect = (int(input('Selection: '))-1)
     
     global PrinterDriver
     
@@ -264,7 +250,7 @@ def fnSetPackageDependancy(driverCollection):
     elif ((driverSelect >= 0) & (driverSelect < len(driverSets))):
         PrinterDriver = driverSets[driverSelect]
     else:
-        print "I'm sorry, I didn't understand that input. Please try again"
+        print("I'm sorry, I didn't understand that input. Please try again")
         fnSetPackageDependancy()
         
 def fnSetPrinterOptions():
@@ -274,10 +260,8 @@ def fnSetPrinterOptions():
     comma separated values."""
     
     cmdGetOpts = ['lpoptions', '-p', Printer, '-l']
-    processGetOpts = subprocess.Popen(cmdGetOpts, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (resultGetOpts, errorbucket) = processGetOpts.communicate()
-    
-    resultLinesGetOpts = string.split(resultGetOpts, '\n')
+    resultGetOpts = subprocess.run(cmdGetOpts, stdout=subprocess.PIPE).stdout.decode('utf-8')    
+    resultLinesGetOpts = resultGetOpts.splitlines()
     
     global OptionList
     OptionList = []
@@ -286,25 +270,27 @@ def fnSetPrinterOptions():
 
     for option in resultLinesGetOpts:
         if len(option) > 3:
-            optionSet = string.split(option, ':')
+            optionSet = option.split(':')
             tempKey = optionSet[0]
-            tOK = string.split(tempKey, "/")
+            tOK = tempKey.split("/")
             oK = tOK[0]
             query = re.compile('\*\w+')
             optResult = query.findall(optionSet[1])
             oV = optResult[0]
             printerOptionsDict[oK] = oV    
 
-    for key, stuff in printerOptionsDict.iteritems():
-        printerOptions.append(key + "=" + stuff[1:])
+    print(printerOptionsDict)
+    for printerOption in printerOptionsDict:
+        print(printerOption + ' : ', printerOptionsDict[printerOption])
+        printerOptions.append(printerOption + "=" + printerOptionsDict[printerOption])
         
     for number, option in enumerate(printerOptions):
-        print "[", number+1, "] ", option
+        print("[", number+1, "] ", option)
         
-    optionSelect = str(raw_input('Please enter the options you would like to include, separated by commas. : '))
+    optionSelect = str(input('Please enter the options you would like to include, separated by commas. : '))
     
     if (len(optionSelect) > 0):
-        for s in string.split(optionSelect, ','):
+        for s in optionSelect.split(','):
             selection = int(s)-1
             OptionList.append(printerOptions[selection])
         
@@ -320,20 +306,20 @@ def fnVerifySelections(retry):
     and if not, restart the process"""
     
     if (retry):
-        print "\tI'm sorry, I didn't understand that response.\
-        \n\tPlease enter 'y' or 'n'."
+        print("\tI'm sorry, I didn't understand that response.\
+        \n\tPlease enter 'y' or 'n'.")
     
-    verified = str(raw_input('\tAre these settings correct? [y/n]: '))
+    verified = str(input('\tAre these settings correct? [y/n]: '))
     
     if verified == 'y':  #start prompting for printer name, version and description
         fnPrintCurrentState()
         global PkgInfoName
         global PkgInfoDescription
         global PkgInfoVersion
-        PkgInfoName = str(raw_input('\tPlease enter the deployment name.\
+        PkgInfoName = str(input('\tPlease enter the deployment name.\
         \n\tExample: ' + nameExample + '\n\t>>> '))
-        PkgInfoDescription = str(raw_input('\n\tPlease enter a printer description.\n\t>>> '))
-        PkgInfoVersion = str(raw_input('\n\tPlease enter the deployment version: '))
+        PkgInfoDescription = str(input('\n\tPlease enter a printer description.\n\t>>> '))
+        PkgInfoVersion = str(input('\n\tPlease enter the deployment version: '))
     elif verified == 'n':
         printerSelection = fnGetConfiguredPrinter()
     else:
@@ -426,24 +412,23 @@ def fnMakePkgInfo():
         makePkgInfoCMD.append('-r')
         makePkgInfoCMD.append(PrinterDriver)        
         
-    pkginfoOutput = subprocess.Popen(makePkgInfoCMD, \
-                                     stdout=subprocess.PIPE, \
-                                     stderr=subprocess.PIPE)
-    (pkginfoResult, errorBucket) = pkginfoOutput.communicate()
-    
+    pkginfoResult = subprocess.run(makePkgInfoCMD, stdout=subprocess.PIPE).stdout.decode('utf-8')
+
     with open(pkgInfoFileName, "wt") as pkgout: #writes variable output to file.
         for line in pkginfoResult:
             pkgout.write(line)
             
     ### Now we add the uninstallable key
     
-#    printerpkginfo = PkgInfoName + ".plist"    
-    
-    plistInput = plistlib.readPlist(pkgInfoFileName)
+    with open(pkgInfoFileName, 'rb') as fp:
+        plistInput = plistlib.load(fp)
+
     plistInput["uninstallable"] = True
-    plistlib.writePlist(plistInput, pkgInfoFileName)
+ 
+    with open(pkgInfoFileName, 'wb') as fp:
+        plistlib.dump(plistInput, fp)
     
-    print "PkgInfo printer deployment file has been created as " + pkgInfoFileName
+    print("PkgInfo printer deployment file has been created as " + pkgInfoFileName)
  
 ###
 #  Kick the whole damn thing off
