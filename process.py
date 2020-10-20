@@ -234,13 +234,11 @@ def fnSetPackageDependancy(driverCollection):
     printerStyles = []
     driverSets = []
     
-    for k, v in sorted(driverCollection.iteritems()):
-        printerStyles.append(k)
-        driverSets.append(v)
+    printerStyles = sorted(driverCollection)
     
-    for dI, dV in enumerate(printerStyles):
-        print('[',dI+1,'] -', dV)
-    
+    for listIndex, printerStyle in enumerate(printerStyles):
+        driverSets.append(driverCollection[printerStyle])
+        print('[',listIndex+1,'] -', printerStyle)
     print("[9999] - No Dependency, will install by hand.")
     
     driverSelect = (int(input('Selection: '))-1)
